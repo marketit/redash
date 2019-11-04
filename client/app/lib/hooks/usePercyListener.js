@@ -4,7 +4,7 @@ function usePercyListener() {
   const [inPercy, setInPercy] = useState(false);
 
   useEffect(() => {
-    const percyWatch = window.matchMedia('only percy');
+    const percyWatch = window.matchMedia('percy');
     const handleChange = (e) => {
       setInPercy(e.matches);
     };
