@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Moment } from '@/components/proptypes';
 import { clientConfig } from '@/services/auth';
 import useForceUpdate from '@/lib/hooks/useForceUpdate';
+import usePercyListener from '@/lib/hooks/usePercyListener';
 import Tooltip from 'antd/lib/tooltip';
 
 function toMoment(value) {
@@ -20,6 +21,7 @@ export function TimeAgo({ date, placeholder, autoUpdate }) {
   const title = startDate ? startDate.format(clientConfig.dateTimeFormat) : '';
 
   const forceUpdate = useForceUpdate();
+  const inPercy = usePercyListener();
 
   useEffect(() => {
     if (autoUpdate) {
@@ -30,7 +32,7 @@ export function TimeAgo({ date, placeholder, autoUpdate }) {
 
   return (
     <Tooltip title={title}>
-      <span data-test="TimeAgo">{value}</span>
+      <span data-test="TimeAgo">{inPercy ? 'an hour ago' : value}</span>
     </Tooltip>
   );
 }
