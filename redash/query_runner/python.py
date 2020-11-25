@@ -179,7 +179,7 @@ class Python(BaseQueryRunner):
         result["rows"].append(values)
 
     @staticmethod
-    def execute_query(data_source_name_or_id, query):
+    def execute_query(data_source_name_or_id, query, user):
         """Run query from specific data source.
 
         Parameters:
@@ -195,7 +195,7 @@ class Python(BaseQueryRunner):
             raise Exception("Wrong data source name/id: %s." % data_source_name_or_id)
 
         # TODO: pass the user here...
-        data, error = data_source.query_runner.run_query(query, None)
+        data, error = data_source.query_runner.run_query(query, user)
         if error is not None:
             raise Exception(error)
 
@@ -253,6 +253,9 @@ class Python(BaseQueryRunner):
 
             code = compile_restricted(query, "<string>", "exec")
 
+            def execute_query_with_user(data_source_name_or_id, query):
+                return self.execute_query(data_source_name_or_id, query, user)
+
             builtins = safe_builtins.copy()
             builtins["_write_"] = self.custom_write
             builtins["__import__"] = self.custom_import
@@ -275,7 +278,7 @@ class Python(BaseQueryRunner):
             restricted_globals["get_query_result"] = self.get_query_result
             restricted_globals["get_source_schema"] = self.get_source_schema
             restricted_globals["get_current_user"] = self.get_current_user
-            restricted_globals["execute_query"] = self.execute_query
+            restricted_globals["execute_query"] = execute_query_with_user # self.execute_query
             restricted_globals["add_result_column"] = self.add_result_column
             restricted_globals["add_result_row"] = self.add_result_row
             restricted_globals["disable_print_log"] = self._custom_print.disable
